@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SOLO JARVIS</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      padding-top: 100px;
+    }
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      background: #22c55e;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>SOLO JARVIS</h1>
+
+<button onclick="startListening()">🎤 Start</button>
+
+<div id="output">Click and speak "jarvis"</div>
+
+<script>
+const output = document.getElementById("output");
+
+// 🎤 Speech Recognition
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.continuous = true;
+
+function startListening() {
+  recognition.start();
+}
+
+recognition.onresult = async (event) => {
+  let text = event.results[event.results.length - 1][0].transcript;
+  console.log("You:", text);
+
+  if (text.toLowerCase().includes("jarvis")) {
+    let query = text.toLowerCase().replace("jarvis", "").trim();
+
+    if (!query) return;
+
+    output.innerText = "Thinking...";
+
+    // 🔥 CALL BACKEND
+    let res = await fetch("https://your-backend-url.onrender.com/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ query })
+    });
+
+    let data = await res.json();
+
+    output.innerText = data.response;
+
+    // 🔊 SPEAK
+    let speech = new SpeechSynthesisUtterance(data.response);
+    speech.rate = 1;
+    speech.pitch = 1;
+    window.speechSynthesis.speak(speech);
+  }
+};
+</script>
+
+</body>
+</html>
