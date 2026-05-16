@@ -55,7 +55,7 @@ recognition.onresult = async (event) => {
     output.innerText = "Thinking...";
 
     // 🔥 CALL BACKEND
-    let res = await fetch("https://your-backend-url.onrender.com/ask", {
+    let res = await fetch("https://solo-ezus.onrender.com/ask", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
